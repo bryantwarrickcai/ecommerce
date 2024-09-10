@@ -10,8 +10,18 @@
 
 Answer:
 
-1. First I created a new repository titled `ecommerce`.
-2. test
+1. I created a virtual environment using the command `python -m venv env`.
+2. I activate the virtual environment using the command `env\Scripts\activate`.
+3. I created a `requirements.txt` file with the following content:
+```
+django
+gunicorn
+whitenoise
+psycopg2-binary
+requests
+urllib3
+```
+4.
 
 ---
 
