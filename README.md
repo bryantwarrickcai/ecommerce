@@ -4,6 +4,8 @@
 
 ## Answer to Questions
 
+---
+
 **Question: Explain how you implemented the checklist above step-by-step (not just following the tutorial).**
 
 Answer:
@@ -31,3 +33,5 @@ Answer:
 **Why is the Django model called an ORM?**
 
 Answer:
+
+---
