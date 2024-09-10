@@ -8,6 +8,8 @@
 
 Answer:
 
+
+
 **Question: Create a diagram that contains the request client to a Django-based web application and the response it gives, and explain the relationship between `urls.py`, `views.py`, `models.py`, and the `html` file.**
 
 Answer:
