@@ -14,13 +14,19 @@ Answer:
 
 Answer:
 
+---
+
 **Explain the use of git in software development!**
 
 Answer:
 
+---
+
 **In your opinion, out of all the frameworks available, why is Django used as the starting point for learning software development?**
 
 Answer:
+
+---
 
 **Why is the Django model called an ORM?**
 
