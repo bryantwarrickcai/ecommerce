@@ -92,6 +92,8 @@ Answer:
 
 <img src="diagram.png" alt="Diagram" width="800">
 
+In Django, `urls.py` maps the URLS to functions or class-based views. When a user access a specific URL, Django checks to determine which view should process the request. `views.py` provides logic that handles the request. It can process requests, retrieve data from models, and renders the response using HTML (template) files. `models.py` defines the structure of the database using Django's ORM. The HTML template is used to define the structure and design that the end-users see. Templates can be inserted in HTML files, which uses `views.py` to fill in the templates.
+
 ---
 
 **Explain the use of git in software development!**
