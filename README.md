@@ -39,6 +39,8 @@ urlpatterns = [
     path('', show_main, name='show_main'),
 ]
 ```
+12. Inside the `urls.py` of the `e_commerce` directory (not the `main` directory), I imported using `from django.urls import path, include`. After that, I added the following URL route in the `urlpatterns` variable: `path('', include('main.urls'))`
+13.
 
 ---
 
