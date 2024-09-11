@@ -90,7 +90,7 @@ def show_main(request):
 
 Answer:
 
-<img src="diagram.png" alt="Diagram" width="500">
+<img src="diagram.png" alt="Diagram" width="800">
 
 ---
 
