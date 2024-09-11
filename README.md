@@ -88,7 +88,9 @@ def show_main(request):
 
 **Question: Create a diagram that contains the request client to a Django-based web application and the response it gives, and explain the relationship between `urls.py`, `views.py`, `models.py`, and the `html` file.**
 
-Answer: ![Diagram](diagram.png "Diagram")
+Answer:
+
+<img src="diagram.png" alt="Diagram" width="500">
 
 ---
 
