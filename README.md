@@ -21,7 +21,24 @@ psycopg2-binary
 requests
 urllib3
 ```
-4.
+4. Inside the virtual environment, I ran the command `pip install -r requirements.txt`.
+5. I created the Django project using the command `django-admin startproject e_commerce .`.
+6. I added `"localhost"` and `"127.0.0.1"` in the `ALLOWED_HOSTS` on `settings.py`.
+7. I added a `".gitignore"` file.
+8. I created the `main` application by running `python manage.py startapp main` while the virtual environment is active.
+9. Inside the `settings.py` in the `e_commerce` directory, I added `'main'` to the `INSTALLED_APPS` variable.
+10. For routing for the `main` application, I created a new file named `urls.py` in the `main` directory.
+11. Inside `urls.py`, I pasted the following content:
+```
+from django.urls import path
+from main.views import show_main
+
+app_name = 'main'
+
+urlpatterns = [
+    path('', show_main, name='show_main'),
+]
+```
 
 ---
 
