@@ -1,8 +1,8 @@
-# E-Commerce Application (BryShop) - PBP Assignment 2
+# E-Commerce Application (BryShop) - PBP Assignment 2 and 3
 
 [Link to PWS application](http://bryant-warrick-ecommerce.pbp.cs.ui.ac.id/)
 
-## Answer to Questions
+## Answer to Questions for Assignment 2
 
 ---
 
@@ -96,7 +96,7 @@ In Django, `urls.py` maps the URLS to functions or class-based views. When a use
 
 ---
 
-**Explain the use of git in software development!**
+**Question: Explain the use of git in software development!**
 
 Answer: Git is a version control system that can be used to track changes in code and files over time. Git is very heavily used in software development, as it stores a complete history of all the changes in the project, allowing developers to review and revert the codebase. Git allows collaboration on projects, and provides detailed logs for who made the specific changes, when, and why.
 
@@ -104,14 +104,48 @@ Git also enables developers to create branches, for separate lines of developmen
 
 ---
 
-**In your opinion, out of all the frameworks available, why is Django used as the starting point for learning software development?**
+**Question: In your opinion, out of all the frameworks available, why is Django used as the starting point for learning software development?**
 
 Answer: Django provides a comprehensive framework that simplifies many aspects of building web applications. Django already provides everything needed to build a web application out of the box, such as database management, user authentication, form handling, and URL routing. By learning Django, beginners can learn about both the frontend and backend aspects of web development. Django is also built in Python, which is usually considered a great programming language for beginners.
 
 ---
 
-**Why is the Django model called an ORM?**
+**Question: Why is the Django model called an ORM?**
 
 Answer: ORM stands for Object-Relational Mapper. A Django model is called an ORM because it provides a way to interact with relational databases using object-oriented programming. ORM allows mapping Python objects (like Django models) to database tables.
+
+---
+
+## Answer to Questions for Assignment 3
+
+---
+
+**Question: Explain why we need data delivery in implementing a platform.**
+
+Answer:
+
+---
+
+**Question: In your opinion, which is better, XML or JSON? Why is JSON more popular than XML?**
+
+Answer:
+
+---
+
+**Question: Explain the functional usage of `is_valid()` method in Django forms. Also explain why we need the method in forms.**
+
+Answer:
+
+---
+
+**Question: Why do we need `csrf_token` when creating a form in Django? What could happen if we did not use `csrf_token` on a Django form? How could this be leveraged by an attacker?**
+
+Answer:
+
+---
+
+**Question: Explain how you implemented the *checklist* above step-by-step (not just following the tutorial).**
+
+Answer:
 
 ---
