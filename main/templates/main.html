@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+{% block content %}
 <!DOCTYPE html>
 <head>
     <title>BryShop</title>
@@ -10,4 +12,33 @@
     <p>{{ npm }}</p>
     <h3>Class:</h3>
     <p>{{ class }}</p>
+
+    {% if not products %}
+    <p>There are no products in BryShop.</p>
+    {% else %}
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Description</th>
+        </tr>
+
+        {% comment %} This is how to display product data
+        {% endcomment %} 
+        {% for product in products %}
+        <tr>
+            <td>{{product.name}}</td>
+            <td>{{product.price}}</td>
+            <td>{{product.description}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    <br />
+
+    <a href="{% url 'main:create_product' %}">
+        <button>Add New Product</button>
+    </a>
 </body>
+{% endblock content %}
