@@ -332,3 +332,229 @@ def show_json_by_id(request, id):
 ![JSON by ID request](postman_json_id.png)
 
 ---
+
+## Answer to Questions for Assignment 4
+
+---
+
+**Question: What is the difference between `HttpResponseRedirect()` and `redirect()`?**
+
+Answer: `HttpResponseRedirect` is a class, and it requires you to provide the URL to which you want to redirect the user. On the other hand, `redirect` is a function, and can be more flexible. With `redirect`, it can take a variety of arguments other than a URL, such as a view name or a model instance.
+
+---
+
+**Question: Explain how the `MoodEntry` model is linked with `User`!**
+
+Answer: The `Product` model has a foreign key to connect to the username of the logged in user, stored in the built-in `User` model. With this way, each object also has a user associated to it, so that users can only see the items they have added to the database, not other users' items.
+
+---
+
+**Question: What is the difference between *authentication* and *authorization*, and what happens when a user logs in? Explain how Django implements these two concepts.**
+
+Answer: Authentication is the process of verifying the identity of the user on a system. Authorization is the process of determining the actions that an authenticated user are allowed to perform. Authorization ensures that users can only have access to the actions that they are permitted to.
+
+When a user logs in, they submit their credentials (username and password). The server then checks these credentials with their database. If the credentials are valid, the user is authenticated, and the system establishes a session for the user, which stores the user's identity. This session allows the user to remain logged in, so that users don't need to enter their details every time for every page they visit. The system then checks for the user's permissions (authorization) for the actions they are allowed to do, to ensure that they don't access restricted areas or perform restricted actions.
+
+Django has a built-in `User` model which represents each user in the system. This model contains fields such as username and password. Django provides the built-in functions to handle user authentication (logging in and out). Authorization in Django is handled through their permission system. Permissions can be created through models, and can be checked using methods like `user.has_perm()`. Django also provides groups, which can contain a collection of permissions that can be assigned to users.
+
+---
+
+**Question: How does Django remember logged-in users? Explain other uses of *cookies* and whether all cookies are safe to use.**
+
+Answer: Django remembers logged-in users by using session cookies. When a user logs in, Django generates a session key, which is associated with the user's information and settings. This session cookie is sent to the user's browser. On subsequent requests, the browser sends the cookie back to the server, which allows Django to recognize the logged-in user.
+
+Cookies are used in many things other than remembering logged-in users. They can store user preferences (such as language settings or theme choices), using a "persistent login" (remember me) feature, to allow users to keep logged in across different sessions, and can also be used for tracking user behavior and analytics.
+
+---
+
+**Question: Explain how did you implement the checklist *step-by-step* (apart from following the tutorial).**
+
+Answer:
+
+1. First, one the `views.py` file on the `main` directory, I added the following imports:
+```
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+```
+2. I added a new `register` function on `views.py`. This function is used to create a user account when the form is submitted. The function is as follows:
+```
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+```
+3. In the `main/templates` directory, I created a new HTML file named `register.html`. I filled it with the following content:
+```
+{% extends 'base.html' %} {% block meta %}
+<title>Register</title>
+{% endblock meta %} {% block content %}
+
+<div class="login">
+    <h1>Register</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <table>
+            {{ form.as_table }}
+            <tr>
+                <td></td>
+                <td><input type="submit" name="submit" value="Register" /></td>
+            </tr>
+        </table>
+    </form>
+
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
+
+{% endblock content %}
+```
+4. On the `urls.py` file inside the `main` directory, I imported the `register` function from `main.views`.
+5. On the same file, I added a new path to `urlpatterns`: `path('register/', register, name='register')`.
+6. On the `views.py` file inside the `main` directory, I imported `AuthenticationForm` from `django.contrib.auth.forms` and also imported `authenticate` and `login` from `django.contrib.auth`.
+7. Still on `views.py`, I created a new function called `login_user`, which is used to authenticate users when they log in. Content is as follows:
+```
+def login_user(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('main:show_main')
+
+    else:
+        form = AuthenticationForm(request)
+    context = {'form': form}
+    return render(request, 'login.html', context)
+```
+8. In the `main/templates` directory, I created a new HTML file named `login.html`. I filled it with:
+```
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="login">
+    <h1>Login</h1>
+
+    <form method="POST" action="">
+        {% csrf_token %}
+        <table>
+        {{ form.as_table }}
+        <tr>
+            <td></td>
+            <td><input class="btn login_btn" type="submit" value="Login" /></td>
+        </tr>
+        </table>
+    </form>
+
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %} Don't have an account yet?
+    <a href="{% url 'main:register' %}">Register Now</a>
+</div>
+
+{% endblock content %}
+```
+9. Inside the `urls.py` file inside the `main` directory, I imported the `login_user` function from `main.views`.
+10. I added a new URL path to `urlpatterns` inside the `urls.py` file: `path('login/', login_user, name='login')`
+11. On the `views.py` file in the `main` directory, I imported `logout` from `django.contrib.auth`.
+12. I added a new function inside the `views.py` file called `logout_user`, which is used to log the user out.
+```
+def logout_user(request):
+    logout(request)
+    return redirect('main:login')
+```
+13. On the `main.html` file in the `main/templates` directory, I added a new "Logout" button at the end of the file.
+```
+<a href="{% url 'main:logout' %}">
+    <button>Logout</button>
+</a>
+```
+14. On the `urls.py` file, I imported the `logout_user` function that I just created on `views.py`.
+15. I added `logout` as a new URL path.
+16. On the `views.py` file, I imported `login_required` from `django.contrib.auth.decorators`.
+17. I added a decorator of `@login_required(login_url='/login')` above the `show_main` function.
+18. On the `views.py` file, I imported `datetime`, `HttpResponseRedirect` from `django.http`, and `reverse` from `django.urls`.
+19. I updated the `login_user` function in `views.py` to set a cookie of the last login date and time. The result is as follows:
+```
+def login_user(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(data=request.POST)
+
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            response = HttpResponseRedirect(reverse("main:show_main"))
+            response.set_cookie('last_login', str(datetime.datetime.now()))
+            return response
+
+    else:
+        form = AuthenticationForm(request)
+    context = {'form': form}
+    return render(request, 'login.html', context)
+```
+20. In the `show_main` function, I added a new key in the `context` variable named `last_login`, which has the value of `request.COOKIES["last_login"]`.
+21. I modified the `logout_user` function to also delete the `last_login` cookie. Final result:
+```
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
+```
+22. I added a new line inside the `main.html` file to show the last login data:
+```
+<h5>Last login session: {{ last_login }}</h5>
+```
+23. On the `models.py` file in the `main` directory, I added a new import: `from django.contrib.auth.models import User`
+24. I added a new attribute to the `Product` entity, titled `user`, to identify the user in which each object belongs to. The new attribute is as follows:
+```
+user = models.ForeignKey(User, on_delete=models.CASCADE)
+```
+25. I modified the `create_product` function inside `views.py` to be as follows:
+```
+def create_product(request):
+    form = ProductForm(request.POST or None)
+
+    if form.is_valid() and request.method == "POST":
+        product = form.save(commit=False)
+        product.user = request.user
+        product.save()
+        return redirect('main:show_main')
+
+    context = {'form': form}
+    return render(request, "create_product.html", context)
+```
+26. In the `show_main` function, I modified the `products` variable to be `products = Product.objects.filter(user=request.user)` so that it only shows the products added by the logged-in user.
+27. I also modified the `name` key in the `context` variable to be `request.user.username`.
+28. I ran a model migration using `python manage.py makemigrations`.
+29. I entered `1` twice during both prompts.
+30. I ran `python manage.py migrate` to apply the migration in the previous step.
+31. I ensured that my project is ready for a production environment. I added `import os` in the `settings.py` file on the `e_commerce` directory.
+32. In the same file, I changed the variable `DEBUG` to this:
+```
+PRODUCTION = os.getenv("PRODUCTION", False)
+DEBUG = not PRODUCTION
+```
+
+---
