@@ -565,25 +565,47 @@ DEBUG = not PRODUCTION
 
 **Question: If there are multiple CSS selectors for an HTML element, explain the priority order of these CSS selectors!**
 
-Answer:
+Answer: The order of priority for CSS selectors are as follows:
+
+* Inline styles (using `style="..."` inside a tag)
+* IDs
+* Classes, attributes, and pseudo-classes
+* Elements and pseudo-elements
+* Source order
 
 ---
 
 **Question: Why does responsive design become an important concept in web application development? Give examples of applications that have and have not implemented responsive design!**
 
-Answer:
+Answer: Responsive design is an important concept because there is a huge diversity of devices that are used for accessing web applications, such as mobile phones, tablets, and desktops. Responsive design ensures that the webpage looks visually appealing and usable across all screen sizes and resolutions. With responsive design, it ensures a better viewing experience, reducing the need of zooming or scrolling. Most web applications nowadays do feature responsive design, such as Google, Microsoft, YouTube, Facebook, and so much more. However, some applications might not feature responsive design, such as older government websites, legacy e-commerce sites, or desktop-only applications.
 
 ---
 
 **Question: Explain the differences between margin, border, and padding, and how to implement these three things!**
 
-Answer:
+Answer: Padding is the space between the content of an element and the border. To implement padding in CSS, one uses the `padding` property to apply the margin on all four sides, or use `padding-top`, `padding-bottom`, `padding-left`, and `padding-right` for individual margins.
+
+Border is a line that surrounds an element. The line can be styled and have different colors. The line can also be invisible. Borders can be applied to all sides or for each side individually. To implement a border, use the `border` property with the parameter being `<width> <style> <color>` as such:
+
+```
+border: 3px solid black
+```
+
+Individual borders can be applied using `border-top`, `border-bottom`, `border-left`, and `border-right`.
+
+Margin is the space between the border of an element and other elements. The margin creates a distance between the element and adjacent elements.
+
+To set a margin, use the `margin` property to apply the margin on all sides, or to apply different margins for individual sides, use the `margin-top`, `margin-bottom`, `margin-left`, and `margin-right` properties.
+
+Here is an image demonstrating the differences:
+
+![Margin, border, and padding order](margin_border_padding.png)
 
 ---
 
 **Question: Explain the concepts of flex box and grid layout along with their uses!**
 
-Answer:
+Answer: The flexbox (flexible box) layout is a one-dimensional layout, meaning that each item is aligned either horizontally or vertically (either rows or columns, but not both). Flex layouts are often used in navigation bars, card layouts (such as product listings), and form layouts. The grid layout is a two-dimensional layout, meaning that each item is aligned in a grid. This layout uses both rows and columns. The grid layout is often used for image galleries, multi-column layouts, list of results, and many more. In the grid layout, an item can take more than one grid space at once.
 
 ---
 
@@ -697,5 +719,9 @@ def delete_product(request, id):
 ```
 16. I added `global.css` to `base.html`.
 17. I added some styling to the `login.html` and `register.html` pages.
+18. I added a new file called `card_info.html` inside `main/templates`. This is used to display a card for the NPM, name, and class.
+19. I added a new file called `card_product.html` so that it uses a card to display information for each product.
+20. I modified the `main.html` page to use CSS styling.
+21. I modified the `create_product.html` and `edit_product.html` pages to add CSS styling.
 
 ---
