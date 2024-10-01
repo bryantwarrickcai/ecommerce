@@ -558,3 +558,144 @@ DEBUG = not PRODUCTION
 ```
 
 ---
+
+## Answer to Questions for Assignment 5
+
+---
+
+**Question: If there are multiple CSS selectors for an HTML element, explain the priority order of these CSS selectors!**
+
+Answer:
+
+---
+
+**Question: Why does responsive design become an important concept in web application development? Give examples of applications that have and have not implemented responsive design!**
+
+Answer:
+
+---
+
+**Question: Explain the differences between margin, border, and padding, and how to implement these three things!**
+
+Answer:
+
+---
+
+**Question: Explain the concepts of flex box and grid layout along with their uses!**
+
+Answer:
+
+---
+
+**Question: Explain how you implemented the checklist above step-by-step (not just following the tutorial)!**
+
+Answer:
+
+1. I created a new function titled `edit_product` inside the `views.py` file. This function is used to edit the details of a product. The function's content is as follows:
+```
+def edit_product(request, id):
+    product = Product.objects.get(pk=id)
+
+    form = ProductForm(request.POST or None, instance=product)
+
+    if form.is_valid() and request.method == "POST":
+        # Save form and return to home page
+        form.save()
+        return HttpResponseRedirect(reverse('main:show_main'))
+
+    context = {'form': form}
+    return render(request, "edit_product.html", context)
+```
+2. I created a new file named `edit_product.html` in the `main/templates` directory. I filled it with the following:
+```
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>Edit Product</h1>
+
+<form method="POST">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Edit Product"/>
+            </td>
+        </tr>
+    </table>
+</form>
+{% endblock %}
+```
+3. On the `urls.py` file inside the `main` directory, I imported the `edit_product` function from `main.views` I just created.
+4. I added `edit_product` as a new URL in the URL patterns: `path('edit-product/<uuid:id>', edit_product, name='edit_product')`
+5. On the `main.html` page in the `main/templates` subdirectory, I added an "Edit" button on each table row. I added a new column with the following content:
+```
+<td>
+    <a href="{% url 'main:edit_product' product.pk %}">
+        <button>
+            Edit
+        </button>
+    </a>
+</td>
+```
+6. I created a new function titled `delete_product` inside the `views.py` file. This function is used to delete a product. The contents are as follows:
+```
+def delete_product(request, id):
+    product = Product.objects.get(pk=id)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
+```
+7. On `urls.py`, I imported the `delete_product` function I just created.
+8. I added a new URL pattern: `path('delete/<uuid:id>', delete_product, name='delete_product')`
+9. On the `main.html` page, I added a "Delete" button on each table row. I added a new column:
+```
+<td>
+    <a href="{% url 'main:delete_product' product.pk %}">
+        <button>
+            Delete
+        </button>
+    </a>
+</td>
+```
+10. On the `base.html` page inside the `templates` folder on the root directory, I imported Tailwind using CDN. I modified the `<head>` part of the file to be like this:
+```
+<head>
+    {% block meta %}
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% endblock meta %}
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+```
+11. In the `templates` folder of the root directory, I created a new file named `navbar.html`. This file is used for the navigation bar used in every webpage of the application.
+12. I added a link to the navbar in `main.html`, `create_product.html`, `login.html`, `register.html`, and `edit_product.html`, by adding `{% include 'navbar.html' %}` in each of these files.
+13. I created a new folder in the root directory titled `static`.
+14. I created a new folder inside the `static` directory titled `css`.
+15. Inside the `css` folder, I created a new file titled `global.css`. I filled it with:
+```
+.form-style form input, form textarea, form select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid #bcbcbc;
+    border-radius: 0.375rem;
+}
+.form-style form input:focus, form textarea:focus, form select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px #3b82f6;
+}
+@keyframes shine {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+.animate-shine {
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.3));
+    background-size: 200% 100%;
+    animation: shine 3s infinite;
+}
+```
+16. I added `global.css` to `base.html`.
+17. I added some styling to the `login.html` and `register.html` pages.
+
+---
