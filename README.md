@@ -723,5 +723,6 @@ def delete_product(request, id):
 19. I added a new file called `card_product.html` so that it uses a card to display information for each product.
 20. I modified the `main.html` page to use CSS styling.
 21. I modified the `create_product.html` and `edit_product.html` pages to add CSS styling.
+22. I configured the `STATIC_URL`, `STATICFILES_DIRS`, and `STATIC_ROOT` variables inside `settings.py`.
 
 ---
