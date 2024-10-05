@@ -726,3 +726,244 @@ def delete_product(request, id):
 22. I configured the `STATIC_URL`, `STATICFILES_DIRS`, and `STATIC_ROOT` variables inside `settings.py`.
 
 ---
+
+## Answer to Questions for Assignment 6
+
+---
+
+**Question: Explain the benefits of using JavaScript in developing web applications!**
+
+Answer: JavaScript plays a crucial role in developing modern web applications today. One of the primary advantages of JavaScript is the ability to create interactive and dynamic user interfaces. JavaScript allows websites to update content and apply animations without requiring a refresh of the page. JavaScript was originally a client-side language, but the invention of Node.js allows using JavaScript for server-side development as well, allowing developers to use a single language for both the frontend and backend. JavaScript is supported by all modern browsers without needing to install additional plugins or tools. JavaScript also supports asynchronous programming, which allows running multiple tasks simultaneously without needing one task to finish first.
+
+---
+
+**Explain why we need to use `await` when we call `fetch()`! What would happen if we don't use `await`?**
+
+Answer: The `fetch` function is an asynchronous function, meaning that it returns a promise, which will be resolved with the response data when it's available. Using `await` allows you to write asynchronous code that looks and behaves like synchronous code. When you need to perform multiple asynchronous operations in a specific order, using `await` will ensure that each operation is completed before moving on to the next one. If you don't use `await`, the rest of the code will keep executiing even when the promise is unresolved. Since the code execution doesn't wait for the fetch to complete, the code might be trying to access data that hasn't been fetched yet, leading to unexpected behaviors or errors.
+
+---
+
+**Why do we need to use the `csrf_exempt` decorator on the view used for AJAX `POST`?**
+
+Answer: Django usees CSRF tokens to ensure that the request originated from the user's browser and is not from a malicious site. Every time a form is rendered, a unique CSRF token is generated and sent to the client. This token must be included in the AJAX request when submitting forms. Our AJAX request is not including a CSRF token, so we need to add the `@csrf_exempt` decorator to bypass the CSRF validation. However, using this introduces potential security risks, so it's better to include the CSRF token with each request.
+
+---
+
+**On this week's tutorial, the user input sanitization is done in the back-end as well. Why can't the sanitization be done just in the front-end?**
+
+Answer: If the sanitization is done only in the front-end, attackers may be able to bypass the front-end validation by making direct API calls to the server (such as using Postman). Users can also disable JavaScript in their browsers, which would render front-end validation ineffective. In summary, the back-end validation provides a backup check in case the data managed to somehow bypass through the front-end check.
+
+---
+
+**Explain how you implemented the checklist above step-by-step (not just following the tutorial)!**
+
+Answer:
+
+1. I added the following two imports to the `views.py` file in the `main` directory:
+```
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+```
+2. I created a new function inside the `views.py` file titled `add_product_ajax`. This function allows creating a new product using AJAX.
+3. Inside the `urls.py` file, I imported the `add_product_ajax` function that I created before.
+4. I added a new URL path inside `urls.py`: `path('create-ajax', add_product_ajax, name='add_product_ajax')`
+5. In the `views.py` file, I removed two lines: `products = Product.objects.filter(user=request.user)` and `"products": products,`.
+6. In the `views.py` file, on the `show_xml` and `show_json` functions, I changed the first line to: `data = Product.objects.filter(user=request.user)`, so that it only displays data by the logged in user rather than all users.
+7. I removed this code snippet in the `main.html` file (the code used to display the cards):
+```
+{% if not products %}
+<div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+    <img src="{% static 'image/very-sad.png' %}" alt="Sad face" class="w-32 h-32 mb-4"/>
+    <p class="text-center text-gray-600 mt-4">There are no products in BryShop.</p>
+</div>
+{% else %}
+<div class="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full">
+    {% for product in products %}
+        {% include 'card_product.html' with product=product %}
+    {% endfor %}
+</div>
+{% endif %}
+```
+8. I replaced that code snippet I removed with:
+```
+<div id="product_cards"></div>
+```
+9. I added a new `<script>` block at the very bottom of the file (before the `{% endblock content %}`). It goes as follows:
+```
+<script>
+    async function getProducts() {
+        return fetch("{% url 'main:show_json' %}").then((res) => res.json());
+    }
+</script>
+```
+10. I added a new async function called `refreshProducts` inside the `main.html` file. The function goes as follows:
+```
+async function refreshProducts() {
+    document.getElementById("product_cards").innerHTML = "";
+    document.getElementById("product_cards").className = "";
+    const products = await getProducts();
+    let htmlString = "";
+    let classNameString = "";
+
+    if (products.length === 0) {
+        classNameString = "flex flex-col items-center justify-center min-h-[24rem] p-6";
+        htmlString = `
+            <div class="flex flex-col items-center justify-center min-h-[24rem] p-6">
+                <img src="{% static 'image/very-sad.png' %}" alt="Sad face" class="w-32 h-32 mb-4"/>
+                <p class="text-center text-gray-600 mt-4">There are no products in BryShop.</p>
+            </div>
+        `;
+    }
+    else {
+        classNameString = "columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6 w-full"
+        products.forEach((product) => {
+            htmlString += `
+                <div class="relative break-inside-avoid">
+                    <div class="relative top-5 bg-sky-100 shadow-md rounded-lg mb-6 break-inside-avoid flex flex-col border-2 border-sky-300">
+                        <div class="bg-sky-200 text-gray-800 p-4 rounded-t-lg border-b-2 border-sky-300">
+                            <h3 class="font-bold text-black text-xl mb-2">${product.fields.name}</h3>
+                        </div>
+                        <div class="p-4">
+                            <h5 class="text-black mb-2 text-xl">Price: ${product.fields.price}</h5>
+                            <p class="text-gray-600 mb-2">${product.fields.description}</p>
+                        </div>
+                    </div>
+                    <div class="absolute top-0 -right-4 flex space-x-1">
+                        <a href="/edit-product/${product.pk}" class="bg-green-400 hover:bg-green-500 text-white rounded-full p-2 shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                            </svg>
+                        </a>
+                        <a href="/delete/${product.pk}" class="bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-md">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    document.getElementById("product_cards").className = classNameString;
+    document.getElementById("product_cards").innerHTML = htmlString;
+}
+
+refreshProducts();
+```
+11. I added a new crud modal ID below the `product_cards` div inside the `main.html` file:
+```
+<div id="crudModal" tabindex="-1" aria-hidden="true" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800 bg-opacity-50 overflow-x-hidden overflow-y-auto transition-opacity duration-300 ease-out">
+    <div id="crudModalContent" class="relative bg-white rounded-lg shadow-lg w-5/6 sm:w-3/4 md:w-1/2 lg:w-1/3 mx-4 sm:mx-0 transform scale-95 opacity-0 transition-transform transition-opacity duration-300 ease-out">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between p-4 border-b rounded-t">
+            <h3 class="text-xl font-semibold text-gray-900">
+                Add New Product
+            </h3>
+            <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" id="closeModalBtn">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+        </div>
+        <!-- Modal body -->
+        <div class="px-6 py-4 space-y-6 form-style">
+            <form id="productForm">
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                    <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-sky-500" required>
+                </div>
+                <div class="mb-4">
+                    <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
+                    <input type="number" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md p-2 hover:border-sky-500" required>
+                </div>
+                <div class="mb-4">
+                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea id="description" name="description" rows="3" class="mt-1 block w-full h-52 resize-none border border-gray-300 rounded-md p-2 hover:border-sky-500" required></textarea>
+                </div>
+            </form>
+        </div>
+        <!-- Modal footer -->
+        <div class="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 p-6 border-t border-gray-200 rounded-b justify-center md:justify-end">
+            <button type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg" id="cancelButton">Cancel</button>
+            <button type="submit" id="submitProduct" form="productForm" class="bg-indigo-700 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg">Save</button>
+        </div>
+    </div>
+</div>
+```
+12. I added a new this code at the very bottom inside the `<script>` tag:
+```
+const modal = document.getElementById('crudModal');
+const modalContent = document.getElementById('crudModalContent');
+
+function showModal() {
+    const modal = document.getElementById('crudModal');
+    const modalContent = document.getElementById('crudModalContent');
+
+    modal.classList.remove('hidden'); 
+    setTimeout(() => {
+        modalContent.classList.remove('opacity-0', 'scale-95');
+        modalContent.classList.add('opacity-100', 'scale-100');
+    }, 50);
+}
+
+function hideModal() {
+    const modal = document.getElementById('crudModal');
+    const modalContent = document.getElementById('crudModalContent');
+
+    modalContent.classList.remove('opacity-100', 'scale-100');
+    modalContent.classList.add('opacity-0', 'scale-95');
+
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 150);
+}
+
+document.getElementById("cancelButton").addEventListener("click", hideModal);
+document.getElementById("closeModalBtn").addEventListener("click", hideModal);
+```
+13. I added a new button in the HTML page to add a new product by AJAX.
+14. I added a function called `addProduct` at the beginning of the `<script>` tag. Content is as follows:
+```
+function addProduct() {
+    fetch("{% url 'main:add_product_ajax' %}", {
+        method: "POST",
+        body: new FormData(document.querySelector('#productForm')),
+    })
+    .then(response => refreshProducts())
+
+    document.getElementById("productForm").reset(); 
+    document.querySelector("[data-modal-toggle='crudModal']").click();
+
+    return false;
+}
+```
+15. I added the following at the end of the code:
+```
+document.getElementById("productForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    addProduct();
+    hideModal();
+});
+```
+16. The next steps help prevent XSS (cross-site scripting). First I imported `strip_tags` from `django.utils.html` in both `views.py` and `forms.py`.
+17. In the `views.py` file, inside the `add_product_ajax` function, I used `strip_tags` for the `name` and `description` variables. The code is modified to this:
+```
+@csrf_exempt
+@require_POST
+def add_product_ajax(request):
+    name = strip_tags(request.POST.get("name"))
+    price = request.POST.get("price")
+    description = strip_tags(request.POST.get("description"))
+    user = request.user
+
+    new_product = Product(name=name, price=price, description=description, user=user)
+    new_product.save()
+
+    return HttpResponse(b"CREATED", status=201)
+```
+18. In the `forms.py` file, I added new methods in the `ProductForm` class to strip HTML tags from the fields.
+19. In the `main.html` file, in the `meta` block, I added the following script: `<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>`
+20. In the `main.html` file in the `refreshProducts` function I created earlier, I added `DOMPurify.sanitize` for `name` and `description`.
+
+---
